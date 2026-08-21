@@ -1,0 +1,5 @@
+fastapi
+dotenv
+uvicorn
+requests
+pydantic

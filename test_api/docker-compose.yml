@@ -1,0 +1,12 @@
+version: '3.8'
+
+services:
+  test_api:
+    build: .
+    #searches in local dir for Dockerfile
+    ports:
+      - "8000:8000"
+    env_file:
+      - .env
+      #brings env file into working directory, so pythons dotenv function can find it
+    restart: always

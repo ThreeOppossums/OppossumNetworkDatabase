@@ -1,5 +1,6 @@
 .env
-**/.env
 **/data/
 **.log
 **/logs/
+**/command.txt
+/accounts

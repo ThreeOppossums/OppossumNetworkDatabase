@@ -46,3 +46,13 @@ created folder for thy python api for later
 ```bash
 docker-compose up -d
 ```
+
+> 21/08/2026
+> created test api
+
+directory: [/test_api](/test_api)
+
+```bash
+docker-compose up -d --build
+#used --build to rebuiöd the docker Image cause I changed some python packages
+```

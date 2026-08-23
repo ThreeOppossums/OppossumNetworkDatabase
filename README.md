@@ -54,5 +54,15 @@ directory: [/test_api](/test_api)
 
 ```bash
 docker-compose up -d --build
-#used --build to rebuiöd the docker Image cause I changed some python packages
+#used --build to rebuild the docker Image cause I changed some python packages
+```
+
+> 23/08/2026
+> created register api
+
+directory: [/accounts/API](/accounts/API)
+
+```bash
+docker-compose up -d --build
+#used --build to rebuild the docker Image cause I changed some python packages
 ```

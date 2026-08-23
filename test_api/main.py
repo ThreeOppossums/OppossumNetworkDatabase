@@ -11,18 +11,19 @@ load_dotenv()
 
 ntfy = os.getenv("NTFY")
 ntfy_timeout = 3
-ntfy_topic_test = "/TEST"
 #timeout in seconds for ntfy-server response
+ntfy_topic_test = "/TEST"
+ntfy_topic_alert = os.getenv("NTFYALERT")
 
 token_server = os.getenv("TOKEN")
 username_ntfy = os.getenv("USERNAME")
 password_ntfy = os.getenv("PASSWORD")
 
-p1 = {"Priority" : "min"}
-p2 = {"Priority" : "low"}
-p3 = {"Priority" : "default"}
-p4 = {"Priority" : "high"}
-p5 = {"Priority" : "max"}
+p1 = {"Title": "DATABASE", "Priority" : "min"}
+p2 = {"Title": "DATABASE", "Priority" : "low"}
+p3 = {"Title": "DATABASE", "Priority" : "default"}
+p4 = {"Title": "DATABASE", "Priority" : "high"}
+p5 = {"Title": "DATABASE", "Priority" : "max"}
 #ntfy-priorities put in var for better accesebility
 
 default_message = "got test message"
@@ -45,7 +46,7 @@ async def test(data: Data):
 
     if not token_request == token_server:
         try:
-            request.post(ntfy + ntfy_topic_test, data=wrong_token_message.encode('utf-8'), auth=(username_ntfy, password_ntfy), headers=p4, timeout=ntfy_timeout)
+            request.post(ntfy + ntfy_topic_alert, data=wrong_token_message.encode('utf-8'), auth=(username_ntfy, password_ntfy), headers=p4, timeout=ntfy_timeout)
         except Exception as e:
             problem = ntfy_error_message + "\n" + wrong_token_message
             print (problem)

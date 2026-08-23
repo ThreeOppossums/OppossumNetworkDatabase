@@ -13,3 +13,22 @@ services:
       - ./data/conf.d:/etc/mysql/conf.d
       - ./data/logs:/logs
       - /usr/local/var/mysql:/var/lib/mysql
+    networks:
+    - network
+
+  API:
+    build: ./API
+    ports:
+      - "8001:8000"
+    env_file:
+      - .env
+    restart: always
+    depends_on:
+      - mysql
+    #waits for the mysql container
+    networks:
+      - network
+
+networks:
+  network:
+    driver: bridge

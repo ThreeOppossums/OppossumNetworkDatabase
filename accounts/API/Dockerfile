@@ -4,13 +4,15 @@ FROM python:3.11-slim
 WORKDIR /app
 #creats a temporary folder for the image
 
-COPY requirements.txt
+COPY requirements.txt .
 #takes content of the requirements file
+
+RUN pip install --upgrade pip
 
 RUN pip install --no-cache-dir -r requirements.txt
 #installs packages in the workdir
 
-COPY main.py
+COPY main.py .
 #takes content of main.py
 
 CMD ["python3", "main.py"]

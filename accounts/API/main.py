@@ -39,7 +39,7 @@ p5 = {"Title": "API-ACCOUNTS", "Priority" : "max"}
 MYSQL_HOST = os.getenv("MYSQL_HOST")
 MYSQL_USER = os.getenv("MYSQL_USER")
 MYSQL_PASSWORD = os.getenv("MYSQL_PASSWORD")
-MYSQL_DATABASE = os.getenv("MYSQL_DATABASE")
+#MYSQL_DATABASE = os.getenv("MYSQL_DATABASE")
 
 default_message = "got test message"
 wrong_token_message = "WARNING: api-request with wrong token"
@@ -67,6 +67,15 @@ def init():
     """)
     #BIGINT: for bigger numbers
 
+    cursor.execute(""" 
+    CREATE TABLE IF NOT EXISTS sessions (
+    id VARCHAR(64) PRIMARY KEY,
+    token TEXT NOT NULL,
+    created_at TEXT NOT NULL,
+    expires_at TEXT NOT NULL),
+    FOREIGN KEY ()
+    """)
+
     database.commit()
     cursor.close()
     database.close()
@@ -78,13 +87,13 @@ def init():
     return
     
 
-def connect_to_database():
+def connect_to_database_accounts():
     try:
         connection = mysql.connector.connect(
             host=MYSQL_HOST,
             user=MYSQL_USER,
             password=MYSQL_PASSWORD,
-            database=MYSQL_DATABASE,
+            database=accounts,
             port=3306 #default port
         )
         return connection
@@ -93,7 +102,7 @@ def connect_to_database():
         return None
 
 def generate_id():
-    database = connect_to_database()
+    database = connect_to_database_accounts()
     if not database:
         return None
     cursor = database.cursor()
@@ -112,6 +121,28 @@ def generate_id():
 
     return generated_id
 
+def generate_token()
+        database = connect_to_database_accounts()
+    if not database:
+        return None
+    cursor = database.cursor()
+ 
+    while True:
+        generated_id = secrets.token_hex(32)
+        query = "SELECT 1 FROM accounts WHERE id = %s LIMIT 1"
+        cursor.execute(query, (generated_id,))
+
+        result = cursor.fetchone()
+        if result is None:
+            break
+
+    cursor.close()
+    database.close()
+
+    return generated_id
+
+def new_session(account):
+
 
 class Data(BaseModel):
     token: str | None = None
@@ -119,10 +150,11 @@ class Data(BaseModel):
     password: str | None = None
     user_id: str | None = None
     steam_id: str | None = None
+    session_key: str | None = None
 #directly processes FastApi requests, assigns to dictionary und converts into selected data(here: str)
 
 @app.post("/register")
-async def test(data: Data):
+async def register(data: Data):
     token_request = data.token
     account = data.account
     password = data.password
@@ -148,7 +180,7 @@ async def test(data: Data):
     if not user_id:
         raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="couldn't establish connection to internal database")
 
-    database = connect_to_database()
+    database = connect_to_database_accounts()
     if not database:
         raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="couldn't establish connection to internal database")
     cursor = database.cursor()
@@ -161,3 +193,41 @@ async def test(data: Data):
     database.close()
     
     return {"info": "request succesfull", "id": user_id}
+
+
+    @app.post("/login")
+    async def login(data: Data):
+        token_request = data.token
+        account = data.account
+        password = data.password
+        
+        if not token_request or not account or not password:
+            raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="missing input")
+        
+        if not token_request == token_server:
+            try:
+                request.post(ntfy + ntfy_topic_alert, data=wrong_token_message.encode('utf-8'), auth=(username_ntfy, password_ntfy), headers=p4, timeout=ntfy_timeout)
+            except Exception as e:
+                problem = ntfy_error_message + "\n" + wrong_token_message
+                print(problem)
+            raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid Verification")
+        
+        database = connect_to_database_accounts()
+        cursor = database.cursor()
+
+        #load account from database
+        query = "SELECT id, password FROM accounts WHERE account = %s LIMIT 1"
+        cursor.execute(query, (account))
+        user = cursor.fetchone()
+
+        if not user:
+            raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid Access")
+        
+        if user["password"] != password;
+            raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid Access")
+        
+        session_token = new_session(account)
+
+        return {"info": "request succesfull", "token": session_token}
+
+        #change connect_to_database to connect_to_database_accounts!!!

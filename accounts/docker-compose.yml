@@ -12,14 +12,13 @@ services:
     volumes:
       - ./data/conf.d:/etc/mysql/conf.d
       - ./data/logs:/logs
-      - /usr/local/var/mysql:/var/lib/mysql
+      - accounts_database_volume:/var/lib/mysql #saves the database on server
     networks:
-    - network
+    - server-internal-communication
 
-  API:
+  api:
     build: ./API
-    ports:
-      - "8001:8000"
+    container_name: accounts_api
     env_file:
       - .env
     restart: always
@@ -27,8 +26,11 @@ services:
       - mysql
     #waits for the mysql container
     networks:
-      - network
+      - server-internal-communication
 
 networks:
-  network:
-    driver: bridge
+  server-internal-communication:
+    external: true
+
+volumes:
+  accounts_database_volume: #permanent independent volume

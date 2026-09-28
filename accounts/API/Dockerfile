@@ -15,5 +15,5 @@ RUN pip install --no-cache-dir -r requirements.txt
 COPY main.py .
 #takes content of main.py
 
-CMD ["python3", "main.py"]
+CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000"]
 #runs command to run python script

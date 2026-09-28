@@ -1,0 +1,20 @@
+services:
+  webserver:
+    image: httpd:latest
+    container_name: apache2
+    restart: always
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./httpd.conf:/usr/local/apache2/conf/httpd.conf
+      - ./logs:/usr/local/apache2/logs/
+
+      - ./server.crt:/usr/local/apache2/conf/server.crt
+      - ./server.key:/usr/local/apache2/conf/server.key
+    networks:
+      - server-internal-communication
+
+networks:
+  server-internal-communication:
+    external: true

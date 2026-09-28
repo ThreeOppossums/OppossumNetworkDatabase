@@ -10,3 +10,7 @@ services:
       - .env
       #brings env file into working directory, so pythons dotenv function can find it
     restart: always
+
+networks:
+  server-internal-communication:
+    external: true

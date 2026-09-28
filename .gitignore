@@ -3,3 +3,7 @@
 **.log
 **/logs/
 **/command.txt
+**/bash-scripts
+
+**server.crt
+**server.key
